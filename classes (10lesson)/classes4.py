@@ -12,13 +12,13 @@ from functools import total_ordering
 class RealString:
     def __init__(self, string):
         self.string = string
-        self.length = len(self.string)
+        self.__length = len(self.string)
 
     def __eq__(self, other):
         if isinstance(other, RealString):
-            return self.length == other.length
+            return self.__length == other.__length
         elif isinstance(other, str):
-            return self.length == len(other)
+            return self.__length == len(other)
         raise TypeError('Это мы не поддерживаем')
 
 
@@ -26,9 +26,9 @@ class RealString:
 
     def __lt__(self, other):
         if isinstance(other, RealString):
-            return self.length < other.length
+            return self.__length < other.__length
         elif isinstance(other, str):
-            return self.length < len(other)
+            return self.__length < len(other)
         raise TypeError('Это мы не поддерживаем')
 
 
