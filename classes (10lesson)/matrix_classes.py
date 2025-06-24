@@ -6,6 +6,10 @@ list2 = [
     [5123,2,3],
     [1,2,-1336]
 ]
+list3 = [
+    [1,2,3],
+    [1,2,3]
+]
 
 class Matrix:
     def __init__(self, m):
@@ -25,6 +29,11 @@ class Matrix:
             text += "|\n"
 
         return text
+
+    def __eq__(self, other):
+        if not isinstance(other, Matrix):
+            return False
+        return self.__m == other.__m
 
     def __add__(self, other):
         if not isinstance(other, Matrix):
@@ -126,6 +135,32 @@ class Matrix:
             new_matrix.append(new_row)
         return cls(new_matrix)
 
+    def getsize(self) -> tuple[int, int]:
+        return self.__height, self.__width
+
+    def getcountelements(self) -> int:
+        return self.__height * self.__width
+
+    def getsumelements(self) -> int:
+        result = 0
+        for row in self.__m:
+            for elem in row:
+                result += elem
+        return result
+
+    def eleminatenegative(self):
+        new_matrix = []
+        for row in self.__m:
+            new_row = []
+            for elem in row:
+                if elem < 0:
+                    new_row.append(0)
+                else:
+                    new_row.append(elem)
+            new_matrix.append(new_row)
+        return Matrix(new_matrix)
+
+
 
 zero = Matrix.zero(2, 4)
 print(zero)
@@ -137,3 +172,9 @@ m1 = Matrix(list2)
 print(m1 + m)
 eye = Matrix.eye(4)
 print(eye)
+m3 = Matrix(list3)
+print(m == m3)
+print(m == m1)
+print(m.getsize())
+print(m.getsumelements())
+print(m1.eleminatenegative())
