@@ -1,0 +1,40 @@
+CREATE DATABASE lesson14;
+USE lesson14;
+
+CREATE TABLE `Users` (
+    `id` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE,
+    `username` VARCHAR(255) NOT NULL,
+    `password` VARCHAR(255) NOT NULL,
+    `email` VARCHAR(255) NOT NULL,
+    PRIMARY KEY(`id`)
+);
+
+CREATE TABLE `seller` (
+    `id` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE,
+    `company` VARCHAR(255) NOT NULL,
+    `phone` VARCHAR(255),
+    PRIMARY KEY(`id`)
+);
+
+CREATE TABLE `products` (
+    `id` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE,
+    `name` VARCHAR(255) NOT NULL,
+    `cost` INTEGER NOT NULL,
+    `count` INTEGER NOT NULL,
+    `seller_id` INTEGER UNSIGNED NOT NULL,
+    PRIMARY KEY(`id`),
+    FOREIGN KEY (`seller_id`) REFERENCES `seller`(`id`)
+        ON UPDATE NO ACTION ON DELETE NO ACTION
+);
+
+CREATE TABLE `orders` (
+    `id` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE,
+    `user_id` INTEGER UNSIGNED NOT NULL,
+    `product_id` INTEGER UNSIGNED NOT NULL,
+    `count` INTEGER NOT NULL,
+    PRIMARY KEY(`id`),
+    FOREIGN KEY (`user_id`) REFERENCES `Users`(`id`)
+        ON UPDATE NO ACTION ON DELETE NO ACTION,
+    FOREIGN KEY (`product_id`) REFERENCES `products`(`id`)
+        ON UPDATE NO ACTION ON DELETE NO ACTION
+);
