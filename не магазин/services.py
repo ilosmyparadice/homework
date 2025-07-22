@@ -1,6 +1,7 @@
 from sqlalchemy import select
 
-from models import session_maker, User, Product, Order
+from models import session_maker, User, Product, Order, Ticket
+
 
 class BuyProductException(Exception):
     pass
@@ -12,6 +13,14 @@ def create_user (username, password) -> User:
         session.commit()
         session.refresh(user)
         return user
+
+def show_profile(user: User) -> str:
+    return (
+        f"Профиль пользователя:\n"
+        f"Имя: {user.username}\n"
+        f"Поинты: {user.points}\n"
+    )
+
 
 def get_user (username, password) -> User | None:
     with session_maker() as session:
@@ -25,8 +34,22 @@ def get_all_products() -> list[Product]:
         products = result.scalars().all()
         return list(products)
 
+def apply_ticket(user : User, ticket_uuid: str) -> str:
+    with session_maker() as session:
+        ticket = session.query(Ticket).filter_by(uuid=ticket_uuid).first()
+        if not ticket:
+            return "Неверный UUID тикета!"
+        if not ticket.available:
+            return "Тикет уже использован!"
+        ticket.available = False
+        ticket.user_id = user.id
+        user = session.get(User, user.id)
+        user.points += 20
 
 
+        session.refresh(user)
+        session.commit()
+        return "Тикет успешно использован! Вам начислены 20 поинтов!"
 
 
 def buy_product(user_id: int, product_id: int, count: int) -> Order:

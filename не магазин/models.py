@@ -11,12 +11,13 @@ class Base(DeclarativeBase):
 
 class User(Base):
     __tablename__ = 'users'
-    id: Mapped[int] = mapped_column(PrimaryKey=True, autoincrement=True)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     username: Mapped[str] = mapped_column(String(64), unique=True)
     password: Mapped[str] = mapped_column(String(64))
-    points: Mapped[str] = mapped_column(Integer, default=0)
+    points: Mapped[int] = mapped_column(Integer, default=0)
 
-    tickets: Mapped[list[int]] = relationship('Ticket', back_populates='user')
+    #tickets: Mapped[list[int]] = relationship('Ticket', back_populates='user')
 
     @staticmethod
     def is_exist(username: str) -> bool:
@@ -31,7 +32,7 @@ class Ticket(Base):
     available: Mapped[bool] = mapped_column(Boolean, default=True)
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable=True)
 
-    user: Mapped["User"] = relationship('User', back_populates='tickets')
+    #user: Mapped["User"] = relationship('User', back_populates='tickets')
 
     @staticmethod
     def valid_ticket(ticket_uuid: str) -> bool:
@@ -42,14 +43,14 @@ class Ticket(Base):
 
 class Order(Base):
     __tablename__ = "orders"
-    id: Mapped[int] = mapped_column(PrimaryKey=True, autoincrement=True)
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable=True)
     product_id: Mapped[str] = mapped_column(String(64))
     count: Mapped[int] = mapped_column(Integer)
     order_datetime: Mapped[datetime] = mapped_column(server_default=func.now())
 
-    user: Mapped["User"] = relationship('User', back_populates='orders')
-    product: Mapped["Product"] = relationship('Product', back_populates='orders')
+    #user: Mapped["User"] = relationship('User', back_populates='orders')
+    #product: Mapped["Product"] = relationship('Product', back_populates='orders')
 
 class Product(Base):
     __tablename__ = "products"
@@ -58,4 +59,4 @@ class Product(Base):
     cost: Mapped[int] = mapped_column(Integer)
     count: Mapped[int] = mapped_column(Integer)
 
-    orders: Mapped[list[int]] = relationship('Order', back_populates='product')
+    #orders: Mapped[list[int]] = relationship('Order', back_populates='product')

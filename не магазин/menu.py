@@ -1,5 +1,5 @@
 from models import User
-from services import create_user, get_user, get_all_products, buy_product
+from services import create_user, get_user, get_all_products, buy_product, apply_ticket, show_profile
 
 
 class ExitException(Exception):
@@ -40,6 +40,10 @@ menu_registered = """
     >Выйти
 """
 
+
+
+
+
 def process_show_products_action(action: str) -> str:
     products = get_all_products()
     max_id_col_width = max(len("ID"), len(str(max(product.id for product in products))))
@@ -68,7 +72,7 @@ def process_login_action(action: str) -> User | None:
 def process_buy_action(action: str, user_id: int) -> str:
     action_parts = action.split()
     if len(action_parts) != 3:
-        return "Неверный формат команды, введите: купить <количество> <id товара>"
+        return "Неверный формат команды, введите: купить <id товара> <количество>"
     if not action_parts[1].isdigit() or not action_parts[2].isdigit():
         return "Неверный формат команды, <id> и <количество> должны быть целыми числами"
     try:
@@ -99,7 +103,7 @@ class Menu:
         action = action.lower().strip()
 
         if action == "товары":
-            print(process_show_products_action)
+            return process_show_products_action(action)
 
         elif action.startswith("купить"):
             if self._user is None:
@@ -109,6 +113,8 @@ class Menu:
         elif action.startswith("тикет"):
             if self._user is None:
                 return "Для добавления тикета необходимо войти в аккаунт"
+            ticket_uuid = input("Введите UUID тикета: ")
+            return apply_ticket(self._user,ticket_uuid)
 
         elif action == "зарегистрироваться":
             if self._user is not None:
@@ -120,13 +126,18 @@ class Menu:
             if self._user is not None:
                 return "Вы уже вошли"
             self._user = process_login_action(action)
+            return "Вход выполнен успешно" if self._user is not None else "Вход не выполнен"
 
         elif action == "профиль":
             if self._user is None:  
                 return "Для просмотра профиля необходимо войти в аккаунт"
+            return show_profile(self._user)
 
         elif action == "выйти":
             raise ExitException()
+
+        else:
+            return "Вы ввели неизвестную команду"
 
     def run(self):
         print(self.welcome())
